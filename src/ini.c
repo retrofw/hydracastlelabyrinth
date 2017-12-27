@@ -30,6 +30,9 @@ void iniInit()
 			strcat(fullPath, "sdmc:/3ds/appdata/HydraCastleLabyrinth/");
 		#endif
 		strcat(fullPath, "system.ini");
+		#ifdef DREAMCAST
+		strcat(fullPath, "/ram/system.ini");
+		#endif
 	}
 	
 	FILE* f;
@@ -61,6 +64,9 @@ void saveSettings()
 			strcat(fullPath, "sdmc:/3ds/appdata/HydraCastleLabyrinth/");
 		#endif
 		strcat(fullPath, "system.ini");
+		#ifdef DREAMCAST
+		strcat(fullPath, "/ram/system.ini");
+		#endif
 	}
 
 	FILE* f;
@@ -146,6 +152,9 @@ void loadSettings()
 			strcat(fullPath, "sdmc:/3ds/appdata/HydraCastleLabyrinth/");
 		#endif
 		strcat(fullPath, "system.ini");
+		#ifdef DREAMCAST
+		strcat(fullPath, "/ram/system.ini");
+		#endif
 	}
 	
 	FILE* f;

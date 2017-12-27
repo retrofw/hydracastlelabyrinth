@@ -69,6 +69,15 @@ void Input_KeyEvent(SDL_Event* evt)
 		case SDLK_2:            bL = w; break;
 		case SDLK_SPACE:        bSelect = w; break;
 		case SDLK_RETURN:       bStart = w; break;
+#elif defined(DINGUX)
+		case SDLK_LSHIFT:        bFaceUp = w; break;
+        case SDLK_LALT:        bFaceDown = w; break;
+        case SDLK_LCTRL:        	bFaceLeft = w; break;
+		case SDLK_SPACE:       bFaceRight = w; break;
+		case SDLK_BACKSPACE:            bR = w; break;
+		case SDLK_TAB:            bL = w; break;
+		case SDLK_ESCAPE:        bSelect = w; break;
+		case SDLK_RETURN:       bStart = w; break;
 #else
         case SDLK_e:        bFaceUp = w; break;
         case SDLK_x:        bFaceDown = w; break;

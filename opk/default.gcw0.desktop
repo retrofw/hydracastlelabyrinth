@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Hydra
+Comment=Hydra Castle Labyrinth
+Exec=hcl.elf
+Icon=icon
+Terminal=false
+Categories=games;
+X-OD-NeedsDownscaling=false

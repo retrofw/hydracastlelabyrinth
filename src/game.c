@@ -13,6 +13,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef DREAMCAST
+#include <zlib/zlib.h>
+#include "dreamcast_icon.h"
+int DC_LoadVMU(void);
+int DC_SaveVMU(void);
+#endif
 
 int gameStep();
 void gameDraw(char doDrawHud);
@@ -80,6 +86,10 @@ void game()
 		strcpy(savename, "data/save.tmp");
 		strcpy(savemap, savemap);
 	}
+	#ifdef DREAMCAST
+		strcpy(savename, "/ram/save.tmp");
+		strcpy(savemap, "/ram/save.map");
+	#endif
 #endif
 	//Setup services
 	PHL_Init();
@@ -1412,6 +1422,9 @@ int writeSave(char* fname)
 	#ifdef _3DS
 		strcat(fullPath, "sdmc:/3ds/appdata/HydraCastleLabyrinth/");
 	#endif
+	#ifdef DREAMCAST
+	strcpy(fullPath, "/ram/");
+	#endif
 	strcat(fullPath, fname);
 
 	if ( (f = fopen(fullPath, "wb")) ) {
@@ -1480,6 +1493,10 @@ int writeSave(char* fname)
 		fclose(f);
 	}
 	
+	#ifdef DREAMCAST
+	DC_SaveVMU();
+	#endif
+	
 	return result;
 }
 
@@ -1487,10 +1504,17 @@ void loadSave(char* fname)
 {
 	FILE* f;
 	
+	#ifdef DREAMCAST
+	DC_LoadVMU();
+	#endif
+	
 	char fullPath[128];
 	strcpy(fullPath, "");
 	#ifdef _3DS
 		strcat(fullPath, "sdmc:/3ds/appdata/HydraCastleLabyrinth/");
+	#endif
+	#ifdef DREAMCAST
+	strcat(fullPath, "/ram/");
 	#endif
 	strcat(fullPath, fname);
 	
@@ -1677,3 +1701,103 @@ void loadUncommonImages()
 		images[imgMisc6020] = PHL_LoadQDA("chr60x20.bmp");
 	}
 }
+
+
+#ifdef DREAMCAST
+int DC_LoadVMU(void) {
+
+    unsigned long unzipsize;
+    uint8* unzipdata;
+    vmu_pkg_t pkg;
+
+    // Name of the file to open
+    file_t fd;
+    if ((fd = fs_open("/vmu/a1/hydracas", O_RDONLY)) == -1)
+    {
+        printf("error opening VMU A1, not found.\n");
+        return -1;
+    }
+   
+    // Remove VMU header
+    vmu_pkg_parse(fs_mmap(fd), &pkg);
+
+    // Allocate memory for the uncompressed data
+    unzipdata = (uint8 *)malloc(524288); //512KB
+    unzipsize = 524288;
+    uncompress(unzipdata, &unzipsize, (uint8 *)pkg.data, pkg.data_len);
+
+    // Save buffer into a RAM file
+    fs_close(fd);
+
+    file_t fd2;
+    if ((fd2 = fs_open("/ram/save.map", O_WRONLY)) == -1)
+    {
+        printf("Can't create RAM file from VMU.\n");
+        return -1;
+    }
+    fs_write(fd2, unzipdata, unzipsize);
+    fs_close(fd2);
+
+    // Free unused memory
+    free(unzipdata);
+
+    return 0;
+}
+
+int DC_SaveVMU(void) {
+    vmu_pkg_t pkg;
+    uint8 *pkg_out;
+    int pkg_size;
+    file_t ft;
+
+    // Temporal for reading the file
+    file_t file;
+    int data_size;
+    unsigned long zipsize = 0;
+    uint8 *datasave;
+    uint8 *zipdata;
+   
+    // Open file and copy to buffer
+    file = fs_open("/ram/save.map", O_RDONLY);
+    data_size = fs_total(file);
+    datasave = (uint8 *)malloc(data_size+1);
+    fs_read(file, datasave, data_size);
+    fs_close(file);
+   
+    // Allocate some memory for compression
+    zipsize = data_size * 2;
+    zipdata = (uint8*)malloc(zipsize);
+
+    // The compressed save
+    compress(zipdata, &zipsize, datasave, data_size);
+
+    // Make the package to the VMU.
+    strcpy(pkg.desc_short, "hydra");
+    strcpy(pkg.desc_long, "Hydra Castle Labyrinth");
+    strcpy(pkg.app_id, "hydracas");
+    pkg.icon_cnt = 1;
+    memcpy((void *)&pkg.icon_pal[0],(void *)&vmu_savestate_pal,32);
+    pkg.icon_data = (const uint8*)&vmu_savestate_data;
+    pkg.icon_anim_speed = 0;
+    pkg.eyecatch_type = VMUPKG_EC_NONE;
+    pkg.data_len = zipsize;
+    pkg.data = zipdata;
+    vmu_pkg_build(&pkg, &pkg_out, &pkg_size);
+
+    // Write at A1 port
+    fs_unlink("/vmu/a1/hydracas");
+    ft = fs_open("/vmu/a1/hydracas", O_WRONLY);
+    if (!ft) {
+        return -1;
+    }
+    fs_write(ft, pkg_out, pkg_size);
+    fs_close(ft);
+
+    // Free unused memory
+    free(pkg_out);
+    free(datasave);
+    free(zipdata);
+   
+    return 0;
+}
+#endif

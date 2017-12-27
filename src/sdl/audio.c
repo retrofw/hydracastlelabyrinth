@@ -26,7 +26,7 @@ PHL_Music PHL_LoadMusic(char* fname, int loop)
     char buff[4096];
     strcpy(buff, "data/");
     strcat(buff, fname);
-    strcat(buff, ".mid");
+    strcat(buff, ".ogg");
     ret.snd = Mix_LoadMUS(buff);
     return ret;
 }
