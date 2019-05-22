@@ -42,6 +42,15 @@ void Input_CloseJoystick()
 	joy1 = NULL;
 }
 
+#define BTN_X			SDLK_SPACE
+#define BTN_A			SDLK_LCTRL
+#define BTN_B			SDLK_LALT
+#define BTN_Y			SDLK_LSHIFT
+#define BTN_L			SDLK_TAB
+#define BTN_R			SDLK_BACKSPACE
+#define BTN_START		SDLK_RETURN
+#define BTN_SELECT		SDLK_ESCAPE
+
 void Input_KeyEvent(SDL_Event* evt)
 {
     int w = (evt->type==SDL_KEYDOWN)?1:0;
@@ -70,14 +79,14 @@ void Input_KeyEvent(SDL_Event* evt)
 		case SDLK_SPACE:        bSelect = w; break;
 		case SDLK_RETURN:       bStart = w; break;
 #elif defined(DINGUX)
-		case SDLK_LSHIFT:        bFaceUp = w; break;
-        case SDLK_LALT:        bFaceDown = w; break;
-        case SDLK_LCTRL:        	bFaceLeft = w; break;
-		case SDLK_SPACE:       bFaceRight = w; break;
-		case SDLK_BACKSPACE:            bR = w; break;
-		case SDLK_TAB:            bL = w; break;
-		case SDLK_ESCAPE:        bSelect = w; break;
-		case SDLK_RETURN:       bStart = w; break;
+		case BTN_X:        bFaceUp = w; break;
+        case BTN_B:        bFaceDown = w; break;
+        case BTN_Y:        bFaceLeft = w; break;
+		case BTN_A:        bFaceRight = w; break;
+		case BTN_R:        bR = w; break;
+		case BTN_L:        bL = w; break;
+		case BTN_START:    bSelect = w; break;
+		case BTN_SELECT:   bStart = w; break;
 #else
         case SDLK_e:        bFaceUp = w; break;
         case SDLK_x:        bFaceDown = w; break;
@@ -203,6 +212,6 @@ void PHL_ScanInput()
 	updateKey(&btnFaceDown, bFaceDown|jFaceDown);
 	updateKey(&btnFaceRight, bFaceRight|jFaceRight);
 	
-	updateKey(&btnAccept, bFaceLeft|jFaceLeft);
+	updateKey(&btnAccept, bFaceLeft|jFaceLeft|bFaceRight|bFaceRight);
 	updateKey(&btnDecline, bFaceDown|jFaceDown);
 }
