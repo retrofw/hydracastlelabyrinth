@@ -81,3 +81,14 @@ pack:
 	
 clean:
 	rm src/*.o src/sdl/*.o ${OUTPUT}
+
+ipk: all
+	@rm -rf /tmp/.hcl-ipk/ && mkdir -p /tmp/.hcl-ipk/root/home/retrofw/games/hcl /tmp/.hcl-ipk/root/home/retrofw/apps/gmenu2x/sections/games
+	@cp -r hcl/hcl.elf hcl/hcl.png hcl/data /tmp/.hcl-ipk/root/home/retrofw/games/hcl
+	@cp hcl/hcl.lnk /tmp/.hcl-ipk/root/home/retrofw/apps/gmenu2x/sections/games
+	@sed "s/^Version:.*/Version: $$(date +%Y%m%d)/" hcl/control > /tmp/.hcl-ipk/control
+	@cp hcl/conffiles /tmp/.hcl-ipk/
+	@tar --owner=0 --group=0 -czvf /tmp/.hcl-ipk/control.tar.gz -C /tmp/.hcl-ipk/ control conffiles
+	@tar --owner=0 --group=0 -czvf /tmp/.hcl-ipk/data.tar.gz -C /tmp/.hcl-ipk/root/ .
+	@echo 2.0 > /tmp/.hcl-ipk/debian-binary
+	@ar r hcl/hcl.ipk /tmp/.hcl-ipk/control.tar.gz /tmp/.hcl-ipk/data.tar.gz /tmp/.hcl-ipk/debian-binary

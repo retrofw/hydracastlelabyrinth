@@ -1,0 +1,4 @@
+title=Hydra C. L.
+description=Hydra Castle Labyrinth port
+exec=/home/retrofw/games/hcl/hcl.elf
+clock=600

@@ -1,0 +1,10 @@
+Package: hydracastlelabyrinth
+Version: 
+Description: RetroGame port of Hydra Castle Labyrinth
+Section: emus
+Priority: optional
+Maintainer: pingflood
+Architecture: mipsel
+Homepage: https://github.com/retrofw/hydracastlelabyrinth
+Depends:
+Source: https://github.com/retrofw/hydracastlelabyrinth
