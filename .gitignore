@@ -4,3 +4,4 @@
 ./opk/hcl.elf
 *.o
 *.opk
+*.ipk

@@ -1,19 +1,10 @@
-CHAINPREFIX := /opt/mipsel-linux-uclibc
-CROSS_COMPILE := $(CHAINPREFIX)/usr/bin/mipsel-linux-
+CC = gcc
 
-CC = $(CROSS_COMPILE)gcc
-
-SYSROOT     := $(shell $(CC) --print-sysroot)
-
-SDL_CFLAGS = $(shell $(SYSROOT)/usr/bin/sdl-config --cflags)
-SDL_LDFLAGS = $(shell $(SYSROOT)/usr/bin/sdl-config --libs)
-
-
-CFLAGS = -D_SDL -DDINGUX -O2 -mips32 $(SDL_CFLAGS) -Isrc -std=c99
-LDFLAGS = -lSDL -lm -lSDL_mixer $(SDL_LDFLAGS)
+CFLAGS = -D_SDL -O0 -g -I/usr/include/SDL -Isrc
+LDFLAGS = -lSDL -lm -lSDL_mixer
 
 DEFINES = -Wall
-OUTPUT = hcl/hcl.elf
+OUTPUT = hcl.elf
 
 SOURCES = src/collision.c  \
 src/effect.c \
@@ -76,8 +67,5 @@ all: ${OUTPUT}
 ${OUTPUT}:${OBJS}
 	${CC} -o ${OUTPUT} ${OBJS} ${CFLAGS} ${LDFLAGS} ${DEFINES} 
 	
-pack:
-	mksquashfs ./opk hydra.opk -all-root -noappend -no-exports -no-xattrs
-	
 clean:
-	rm src/*.o src/sdl/*.o ${OUTPUT}
+	rm src/*.o src/enemies/*.o src/sdl/*.o ${OUTPUT}
