@@ -19,27 +19,31 @@ int jR = 0, jL = 0;
 int jStart = 0, jSelect = 0;
 int jAccept = 0, jDecline = 0;
 
-SDL_Joystick *joy1 = NULL;
+SDL_Joystick *joy[2] = NULL;
+
 
 int useJoystick = 1;
 
 void Input_InitJoystick()
 {
 	int n = SDL_NumJoysticks();
-	if (n) {
-		joy1 = SDL_JoystickOpen(0);
+	for(int i = 0; i < n; i++)
+	{
+		joy[i] = SDL_JoystickOpen(n);
 		SDL_JoystickEventState(SDL_ENABLE);
 		printf("Using %s\n", SDL_JoystickName(0));
-	} else {
-		joy1 = NULL;
-	}
+	} 
 }
 
 void Input_CloseJoystick()
 {
-	if(joy1)
-		SDL_JoystickClose(joy1);
-	joy1 = NULL;
+	int n = SDL_NumJoysticks();
+	for(int i = 0; i < n; i++)
+	{
+		if(joy[i])
+			SDL_JoystickClose(joy[i]);
+		joy[i] = NULL;
+	}
 }
 
 void Input_KeyEvent(SDL_Event* evt)
@@ -138,14 +142,14 @@ void Input_JoyEvent(SDL_Event* evt) {
 */
 	switch(evt->jbutton.button)
 	{
-		case 0: jFaceDown = w; break;
+		case 2: jFaceDown = w; break;
 		case 1: jFaceLeft = w; break;
-		case 2: jFaceRight = w; break;
+		case 0: jFaceRight = w; break;
 		case 3: jFaceUp = w; break;
 		case 4: jL = w; break;
 		case 5: jR = w; break;
-		case 6: jSelect = w; break;
-		case 7: jStart = w; break;
+		case 8: jSelect = w; break;
+		case 9: jStart = w; break;
 		/*case 12:jUp = w; break;
 		case 13:jDown = w; break;
 		case 14:jLeft = w; break;
