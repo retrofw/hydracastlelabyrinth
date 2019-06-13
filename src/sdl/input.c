@@ -19,20 +19,31 @@ int jR = 0, jL = 0;
 int jStart = 0, jSelect = 0;
 int jAccept = 0, jDecline = 0;
 
-SDL_Joystick *joy[2] = NULL;
+SDL_Joystick *joy[4];
 
 
 int useJoystick = 1;
 
 void Input_InitJoystick()
 {
+	//set them all to null first
+	for(int i = 0; i < 4; i++)
+	{
+		joy[i] = NULL;
+	}
+	
 	int n = SDL_NumJoysticks();
 	for(int i = 0; i < n; i++)
 	{
-		joy[i] = SDL_JoystickOpen(n);
-		SDL_JoystickEventState(SDL_ENABLE);
-		printf("Using %s\n", SDL_JoystickName(0));
+		joy[i] = SDL_JoystickOpen(i);	
+		printf("Using %s\n", SDL_JoystickName(i));
 	} 
+	if(n > 0)
+	{
+		SDL_JoystickEventState(SDL_ENABLE);
+	}
+	
+	
 }
 
 void Input_CloseJoystick()
@@ -97,8 +108,8 @@ void Input_KeyEvent(SDL_Event* evt)
 }
 
 void Input_JoyAxisEvent(SDL_Event* evt) {
-	if(evt->jaxis.which!=0)
-		return;
+	//if(evt->jaxis.which!=0)
+		//return;
 	#define DEADZONE 32
 	if(evt->jaxis.axis==0) {
 		int v = (evt->jaxis.value)/256;
@@ -115,8 +126,8 @@ void Input_JoyAxisEvent(SDL_Event* evt) {
 }
 
 void Input_JoyEvent(SDL_Event* evt) {
-	if(evt->jbutton.which!=0)
-		return;
+	//if(evt->jbutton.which!=0)
+		//return;
 	int w = (evt->type==SDL_JOYBUTTONDOWN)?1:0;
 /* XBox 360 based mapping here,
 	(would be better to switch to SDL2.0)
