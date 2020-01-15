@@ -7,9 +7,7 @@ void PHL_AudioInit()
 {
     SDL_InitSubSystem(SDL_INIT_AUDIO);
     Mix_Init(0);
-    Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096);
-
-    PHL_MusicVolume(0.25f * music_volume);
+    Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024);
 }
 
 void PHL_AudioClose()
@@ -24,9 +22,7 @@ PHL_Music PHL_LoadMusic(char* fname, int loop)
     PHL_Music ret;
     ret.loop = loop;
     char buff[4096];
-    strcpy(buff, "data/");
-    strcat(buff, fname);
-    strcat(buff, ".ogg");
+    sprintf(buff, "data/%s.ogg", fname);
     ret.snd = Mix_LoadMUS(buff);
     return ret;
 }
@@ -34,8 +30,7 @@ PHL_Music PHL_LoadMusic(char* fname, int loop)
 PHL_Sound PHL_LoadSound(char* fname)
 {
     char buff[4096];
-    strcpy(buff, "data/");
-    strcat(buff, fname);
+    sprintf(buff, "data/%s", fname);
     return Mix_LoadWAV(buff);
 }
 
@@ -47,7 +42,7 @@ void PHL_MusicVolume(float vol)
 void PHL_PlayMusic(PHL_Music snd)
 {
     if(snd.snd)
-        Mix_PlayMusic(snd.snd, snd.loop?-1:0);
+        Mix_PlayMusic(snd.snd, snd.loop ? -1 : 0);
 }
 
 void PHL_PlaySound(PHL_Sound snd, int channel)
