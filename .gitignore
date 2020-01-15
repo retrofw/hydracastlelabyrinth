@@ -1,7 +1,5 @@
 *.elf
-./opk/data
-./opk/data/
-./opk/hcl.elf
 *.o
 *.opk
 *.ipk
+*.dge

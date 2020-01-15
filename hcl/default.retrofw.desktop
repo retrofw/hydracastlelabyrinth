@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=Hydra C. L.
+Comment=Hydra Castle Labyrinth port
+Exec=hcl.dge
+Icon=hcl
+Categories=games;
+X-OD-Manual=hcl.man.txt
+X-OD-Selector=
+X-OD-Filter=
+Terminal=false
+Type=Application
+StartupNotify=true

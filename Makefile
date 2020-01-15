@@ -1,3 +1,5 @@
+TARGET = hcl/hcl.dge
+
 CHAINPREFIX := /opt/mipsel-linux-uclibc
 CROSS_COMPILE := $(CHAINPREFIX)/usr/bin/mipsel-linux-
 
@@ -13,7 +15,6 @@ CFLAGS = -D_SDL -DDINGUX -O2 -mips32 $(SDL_CFLAGS) -Isrc -std=c99
 LDFLAGS = -lSDL -lm -lSDL_mixer $(SDL_LDFLAGS)
 
 DEFINES = -Wall
-OUTPUT = hcl/hcl.elf
 
 SOURCES = src/collision.c  \
 src/effect.c \
@@ -71,16 +72,16 @@ src/sdl/input.c \
 src/sdl/system.c
 OBJS = ${SOURCES:.c=.o}
 
-all: ${OUTPUT}
+all: $(TARGET)
 
-${OUTPUT}:${OBJS}
-	${CC} -o ${OUTPUT} ${OBJS} ${CFLAGS} ${LDFLAGS} ${DEFINES} 
-	
+$(TARGET):${OBJS}
+	${CC} -o $(TARGET) ${OBJS} ${CFLAGS} ${LDFLAGS} ${DEFINES}
+
 pack:
 	mksquashfs ./opk hydra.opk -all-root -noappend -no-exports -no-xattrs
-	
+
 clean:
-	rm src/*.o src/sdl/*.o ${OUTPUT}
+	rm src/*.o src/sdl/*.o $(TARGET)
 
 ipk: all
 	@rm -rf /tmp/.hcl-ipk/ && mkdir -p /tmp/.hcl-ipk/root/home/retrofw/games/hcl /tmp/.hcl-ipk/root/home/retrofw/apps/gmenu2x/sections/games
@@ -92,3 +93,12 @@ ipk: all
 	@tar --owner=0 --group=0 -czvf /tmp/.hcl-ipk/data.tar.gz -C /tmp/.hcl-ipk/root/ .
 	@echo 2.0 > /tmp/.hcl-ipk/debian-binary
 	@ar r hcl/hcl.ipk /tmp/.hcl-ipk/control.tar.gz /tmp/.hcl-ipk/data.tar.gz /tmp/.hcl-ipk/debian-binary
+
+opk: all
+	@mksquashfs \
+	hcl/default.retrofw.desktop \
+	hcl/hcl.dge \
+	hcl/hcl.png \
+	hcl/data \
+	hcl/hcl.opk \
+	-all-root -noappend -no-exports -no-xattrs
