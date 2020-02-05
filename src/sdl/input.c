@@ -19,27 +19,42 @@ int jR = 0, jL = 0;
 int jStart = 0, jSelect = 0;
 int jAccept = 0, jDecline = 0;
 
-SDL_Joystick *joy1 = NULL;
+SDL_Joystick *joy[4];
+
 
 int useJoystick = 1;
 
 void Input_InitJoystick()
 {
-	int n = SDL_NumJoysticks();
-	if (n) {
-		joy1 = SDL_JoystickOpen(0);
-		SDL_JoystickEventState(SDL_ENABLE);
-		printf("Using %s\n", SDL_JoystickName(0));
-	} else {
-		joy1 = NULL;
+	//set them all to null first
+	for(int i = 0; i < 4; i++)
+	{
+		joy[i] = NULL;
 	}
+	
+	int n = SDL_NumJoysticks();
+	for(int i = 0; i < n; i++)
+	{
+		joy[i] = SDL_JoystickOpen(i);	
+		printf("Using %s\n", SDL_JoystickName(i));
+	} 
+	if(n > 0)
+	{
+		SDL_JoystickEventState(SDL_ENABLE);
+	}
+	
+	
 }
 
 void Input_CloseJoystick()
 {
-	if(joy1)
-		SDL_JoystickClose(joy1);
-	joy1 = NULL;
+	int n = SDL_NumJoysticks();
+	for(int i = 0; i < n; i++)
+	{
+		if(joy[i])
+			SDL_JoystickClose(joy[i]);
+		joy[i] = NULL;
+	}
 }
 
 #define BTN_X			SDLK_SPACE
@@ -102,8 +117,8 @@ void Input_KeyEvent(SDL_Event* evt)
 }
 
 void Input_JoyAxisEvent(SDL_Event* evt) {
-	if(evt->jaxis.which!=0)
-		return;
+	//if(evt->jaxis.which!=0)
+		//return;
 	#define DEADZONE 32
 	if(evt->jaxis.axis==0) {
 		int v = (evt->jaxis.value)/256;
@@ -120,8 +135,8 @@ void Input_JoyAxisEvent(SDL_Event* evt) {
 }
 
 void Input_JoyEvent(SDL_Event* evt) {
-	if(evt->jbutton.which!=0)
-		return;
+	//if(evt->jbutton.which!=0)
+		//return;
 	int w = (evt->type==SDL_JOYBUTTONDOWN)?1:0;
 /* XBox 360 based mapping here,
 	(would be better to switch to SDL2.0)
@@ -147,14 +162,14 @@ void Input_JoyEvent(SDL_Event* evt) {
 */
 	switch(evt->jbutton.button)
 	{
-		case 0: jFaceDown = w; break;
+		case 2: jFaceDown = w; break;
 		case 1: jFaceLeft = w; break;
-		case 2: jFaceRight = w; break;
+		case 0: jFaceRight = w; break;
 		case 3: jFaceUp = w; break;
 		case 4: jL = w; break;
 		case 5: jR = w; break;
-		case 6: jSelect = w; break;
-		case 7: jStart = w; break;
+		case 8: jSelect = w; break;
+		case 9: jStart = w; break;
 		/*case 12:jUp = w; break;
 		case 13:jDown = w; break;
 		case 14:jLeft = w; break;
